@@ -1,0 +1,52 @@
+#include<opencv2\opencv.hpp>
+#include<highgui.h>
+using namespace cv;
+using namespace std;
+int main(int argc, char** argv)
+{
+	// 加载图像
+	Mat testImage = imread("E:/cvtest/img/he2.jpg");
+	Mat testImage2 = imread("E:/cvtest/dota.jpg");
+	CV_Assert(testImage.depth() == CV_8U);
+	//namedWindow("test_image", CV_WINDOW_AUTOSIZE);
+	//imshow("input", testImage);
+
+	// 使用Filter2D函数
+	Mat result;
+	//Mat kern = (Mat_<char>(3, 3) << 0, -1, 0, -1, 5, -1, 0, -1, 0);
+	//filter2D(testImage, result, testImage.depth(), kern);
+
+	//Mat 对象定义
+	Mat B(testImage);
+	Mat C = testImage;
+	Mat D(testImage, Rect(10, 10, 100, 100));
+	Mat E = testImage.clone();
+	Mat F;
+	testImage.copyTo(F);
+	Mat M(200, 200, CV_8UC3, Scalar(0, 0, 255));
+	Mat N;
+	N.create(200, 200, CV_8UC3);
+	Mat I = Mat::eye(200, 200, CV_64F);
+	Mat G = (Mat_ <double>(3,3)<<0,-1,0,-1,5,-1,0,-1,0);
+
+	//计算运行时间
+	Mat dstimg;
+	dstimg.create(testImage.size(), testImage.type());
+	double time0 = static_cast<double>(getTickCount());
+	blur(testImage,dstimg,Size(3,3),Point(-1,-1));
+	time0 = ((double)getTickCount() - time0) / getTickFrequency();
+	cout << "time:" << time0 << endl;
+
+	Mat out1;
+	//addWeighted(testImage, 0.5, testImage2, 05, 0, out1, -1);//需要相同的尺寸
+
+	//normalize(testImage, out1, 100,20, CV_MINMAX, -1);//归一化，最大值100，最小值20，方法CV_MINMAX
+
+	//dft(testImage, out1);//离散傅里叶变化，空间域转化到频率域
+
+	resize(testImage, out1,Size(testImage.cols/2, testImage.rows/2),INTER_LINEAR);
+
+	imshow("output", out1);
+	waitKey(0);
+	return 0;
+}

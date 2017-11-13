@@ -1,0 +1,80 @@
+#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <math.h>  
+using namespace cv;
+using namespace std;
+using namespace cv::ml;
+
+//分割画矩
+
+
+int main(int argc, char** argv) {
+	Mat src, dst;
+	src = imread("E:/cvtest/车牌号/23.jpg");
+	if (!src.data) {
+		printf("could find the file!\n");
+		return -1;
+	}
+
+	Mat gray_src;//灰度
+	cvtColor(src,gray_src,CV_BGR2GRAY);
+	//Mat blur_src;
+	//blur(gray_src, gray_src, Size(5,5),Point(-1,-1));
+
+	Mat threshold_src;//阈值
+	threshold(gray_src,threshold_src,60,255,CV_THRESH_BINARY);
+
+	Mat contours_src;//找轮廓
+	threshold_src.copyTo(contours_src);
+	vector<vector<Point>>contours;
+	findContours(contours_src,contours, CV_RETR_EXTERNAL,CV_CHAIN_APPROX_NONE);
+	Mat result;//绘制轮廓
+	threshold_src.copyTo(result);
+	//cvtColor(result, result, CV_GRAY2RGB);
+	//drawContours(result, contours, -1, cv::Scalar(0, 0, 255), 1);
+	//imshow("asd", result);
+
+
+	//绘制外界矩形
+	vector<vector<Point>> contours_ploy(contours.size());//轮廓点的多边形
+	vector<Rect> ploy_rects(contours.size());//矩形
+	for (size_t i = 0; i < contours.size(); i++) {
+		approxPolyDP(Mat(contours[i]), contours_ploy[i], 3, true);   
+		ploy_rects[i] = boundingRect(contours_ploy[i]);
+	}
+	Mat result2;
+	src.copyTo(result2);
+	for (size_t t = 0; t < contours.size(); t++) {
+		Scalar color = Scalar(0, 0, 255);
+		rectangle(result2, ploy_rects[t], color, 1, 8);
+	}
+	imshow("asdasd", result2);
+
+
+	waitKey(0);
+	return 0;
+}
+
+//验证字符
+bool verifySizes(Mat r) {
+	float aspect = 10.0 / 45.0f;
+	char charAspect = (float)r.cols / (float)r.rows;
+	float error = 0.35;
+	float minHeight = 30;
+	float maxHeight = 45;
+
+	float minAspect = 0.2;
+	float maxAspect = aspect + aspect*error;
+
+	float area = countNonZero(r);
+	float bbArea = r.cols*r.rows;
+
+	float percPixels = area / bbArea;
+
+	if (percPixels<0.8 && charAspect >minAspect && charAspect < maxAspect && r.rows >= minHeight && r.rows < maxHeight) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}

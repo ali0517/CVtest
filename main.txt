@@ -1,0 +1,21 @@
+#include <opencv2/opencv.hpp>
+#include <iostream>
+#include <math.h>
+using namespace cv;
+using namespace std;
+
+int main(int argc, char** argv) {
+	Mat src, dst;
+	src = imread("E:/cvtest/img/he2.jpg");
+	if (!src.data) {
+		printf("could find the file!\n");
+		return -1;
+	}
+	//namedWindow("output", CV_WINDOW_AUTOSIZE);
+	imshow("input", src);
+
+
+
+	waitKey(0);
+	return 0;
+}

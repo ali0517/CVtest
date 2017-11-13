@@ -1,0 +1,26 @@
+#include <iostream>
+//#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+//#include <opencv2/imgproc/imgproc.hpp>
+#include "plate_locate.h"
+
+using namespace std;
+using namespace cv;
+using namespace pr;
+void testLocate(Mat, vector<Mat>&);
+
+int main(int argc,char **argv)
+{
+	Mat img = imread("E:/cvtest/³µÅÆºÅ/test3/3.jpg");	
+	//test locate
+	vector<Mat> result;
+	imshow("src",img);
+	testLocate(img, result);
+	waitKey(0);
+}
+
+void testLocate(Mat src, vector<Mat>& result){
+	CPlateLocate* A = new CPlateLocate;
+	A->PlateLocate(src, result);
+	delete A;
+}
